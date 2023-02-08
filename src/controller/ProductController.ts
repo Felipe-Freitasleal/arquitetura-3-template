@@ -1,98 +1,101 @@
-import { Request, Response } from "express"
-import { ProductBusiness } from "../business/ProductBusiness"
-import { BaseError } from "../errors/BaseError"
+import { Request, Response } from "express";
+import { ProductBusiness } from "../business/ProductBusiness";
+import { ProductDTO } from "../dtos/ProductDTO";
+import { BaseError } from "../errors/BaseError";
 
 export class ProductController {
-    public getProducts = async (req: Request, res: Response) => {
-        try {
-            const input = {
-                q: req.query.q
-            }
+  // propriedades
+  constructor(
+    // parâmetros
+    private productDTO: ProductDTO,
+    private productBusiness: ProductBusiness
+  ) {}
 
-            const productBusiness = new ProductBusiness()
-            const output = await productBusiness.getProducts(input)
+  // métodos
+  public getProducts = async (req: Request, res: Response) => {
+    try {
+      const input = {
+        q: req.query.q,
+      };
 
-            res.status(200).send(output)
-        } catch (error) {
-            console.log(error)
+      const output = await this.productBusiness.getProducts(input);
 
-            if (error instanceof BaseError) {
-                res.status(error.statusCode).send(error.message)
-            } else {
-                res.status(500).send("Erro inesperado")
-            }
-        }
+      res.status(200).send(output);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 
-    public createProduct = async (req: Request, res: Response) => {
-        try {
+  public createProduct = async (req: Request, res: Response) => {
+    try {
+      const input = this.productDTO.createProductInput(
+        req.body.id,
+        req.body.name,
+        req.body.price
+      );
 
-            const input = {
-                id: req.body.id,
-                name: req.body.name,
-                price: req.body.price
-            }
+      const output = await this.productBusiness.createProduct(input);
 
-            const productBusiness = new ProductBusiness()
-            const output = await productBusiness.createProduct(input)
+      res.status(201).send(output);
+    } catch (error) {
+      console.log(error);
 
-            res.status(201).send(output)
-        } catch (error) {
-            console.log(error)
-
-            if (error instanceof BaseError) {
-                res.status(error.statusCode).send(error.message)
-            } else {
-                res.status(500).send("Erro inesperado")
-            }
-        }
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 
-    public editProduct = async (req: Request, res: Response) => {
-        try {
+  public editProduct = async (req: Request, res: Response) => {
+    try {
 
-            const input = {
-                idToEdit: req.params.id,
-                newId: req.body.id,
-                newName: req.body.name,
-                newPrice: req.body.price,
-                newCreatedAt: req.body.createdAt
-            }
+      const input = this.productDTO.updateProductInput(
+        req.params.id,
+        req.body.id,
+        req.body.name,
+        req.body.price,
+        req.body.createdAt
+      );
 
-            const productBusiness = new ProductBusiness()
-            const output = await productBusiness.editProduct(input)
+      const output = await this.productBusiness.editProduct(input);
 
-            res.status(200).send(output)
-        } catch (error) {
-            console.log(error)
+      res.status(200).send(output);
+    } catch (error) {
+      console.log(error);
 
-            if (error instanceof BaseError) {
-                res.status(error.statusCode).send(error.message)
-            } else {
-                res.status(500).send("Erro inesperado")
-            }
-        }
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 
-    public deleteProduct = async (req: Request, res: Response) => {
-        try {
+  public deleteProduct = async (req: Request, res: Response) => {
+    try {
+      const input = {
+        idToDelete: req.params.id,
+      };
 
-            const input = {
-                idToDelete: req.params.id
-            }
+      const output = await this.productBusiness.deleteProduct(input);
 
-            const productBusiness = new ProductBusiness()
-            const output = await productBusiness.deleteProduct(input)
+      res.status(200).send(output);
+    } catch (error) {
+      console.log(error);
 
-            res.status(200).send(output)
-        } catch (error) {
-            console.log(error)
-
-            if (error instanceof BaseError) {
-                res.status(error.statusCode).send(error.message)
-            } else {
-                res.status(500).send("Erro inesperado")
-            }
-        }
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 }
