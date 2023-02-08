@@ -3,8 +3,10 @@ import { ProductDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class ProductDatabase extends BaseDatabase {
+    // propriedades
     public static TABLE_PRODUCTS = "products"
 
+    // métodos
     public async findProducts(q: string | undefined) {
         if (q) {
             const result: ProductDB[] = await BaseDatabase
